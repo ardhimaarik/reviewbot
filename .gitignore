@@ -1,0 +1,13 @@
+.env
+*.pem
+secrets/
+__pycache__/
+*.pyc
+.pytest_cache/
+eval/reports/
+__pycache__/
+*.pyc
+.pytest_cache/
+.air.toml  # (don't commit local air config)
+eval/reports/
+*.log
