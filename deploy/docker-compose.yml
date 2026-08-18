@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  reviewbot:
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    container_name: reviewbot-go
+    ports:
+      - "8090:8090"
+    env_file: .env
+    environment:
+      - PORT=8090
+      - AI_SERVICE_URL=http://reviewbot-ai:8081
+      - ENVIRONMENT=production
+    volumes:
+      - ./secrets:/app/secrets:ro
+    depends_on:
+      reviewbot-ai:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  reviewbot-ai:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    container_name: reviewbot-ai
+    ports:
+      - "8081:8081"
+    env_file: .env
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - LITELLM_URL=http://host.docker.internal:4000
+      - ENVIRONMENT=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
