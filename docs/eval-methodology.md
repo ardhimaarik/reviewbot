@@ -115,3 +115,29 @@ cat eval/reports/$(ls -t eval/reports/*.md | head -1)
 docker exec homelab-postgres psql -U homelab -d reviewbot \
   -c "SELECT created_at, model, metrics->>'precision' as precision, metrics->>'recall' as recall FROM eval_runs ORDER BY created_at DESC LIMIT 10;"
 ```
+
+## Baseline Results (2026-08-18, qwen3.5:9b, prompt v1)
+
+| Metric | Baseline | Target | Notes |
+|---|---|---|---|
+| Precision | 14.5% | 60% | Low — historical labels not manually verified |
+| Recall | 6.5% | 40% | Low — file mismatch issue (see Limitation #6) |
+| Synthetic Recall | 10% | 70% | Primary metric for Week 2 |
+| False Positive Rate | 66.7% | 20% | Critical — too noisy |
+| Hallucinations | 0% | 0% | ✅ Perfect |
+| Latency p50 | 56.9s | <60s | Borderline |
+| Latency p95 | 120s | <120s | At limit |
+
+### Limitation #6: File Mismatch in Historical Labels
+
+GitHub review comments are often posted on files different from those changed in the PR diff. Example: PR changes `promql/engine.go` but reviewer comments on `promql/engine_test.go`. Bot reviews only files in the diff — matching is impossible for cross-file comments.
+
+**Impact**: Precision and recall for historical source are underestimated.
+
+**Mitigation for v2**: Manual labeling pass — mark `catchable_by_llm: false` for cross-file comments. Filter these from recall calculation.
+
+**Primary metric for now**: Synthetic Recall (ground truth = 100% catchable, no file mismatch).
+
+### Key Finding
+
+False positive rate of 66.7% on clean PRs is the most critical issue. Bot is too noisy — engineers will lose trust quickly. Priority for Week 3: confidence gating (threshold 0.7) should reduce this significantly.
