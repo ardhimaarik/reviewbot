@@ -87,6 +87,7 @@ def match_issues(bot_issues: list[dict], human_labels: list[dict]) -> tuple:
         for i, human_iss in enumerate(unmatched_human):
             # File match (if human has file info)
             file_match = (
+                case.get("source") == "historical" or  # skip file check for historical
                 not human_iss.get("file") or
                 bot_iss.get("file", "") == human_iss.get("file", "")
             )
@@ -264,7 +265,7 @@ def save_to_db(metrics: dict, timestamp: str):
     """Save eval results to Postgres."""
     try:
         import psycopg2
-        dsn = os.getenv("POSTGRES_DSN")
+        dsn = os.getenv("EVAL_POSTGRES_DSN") or os.getenv("POSTGRES_DSN")
         if not dsn:
             print("  ⚠️ POSTGRES_DSN not set, skipping DB save")
             return
