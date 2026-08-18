@@ -1,6 +1,6 @@
 .PHONY: prereq up down dev logs eval test smee help
 
-DOCKER_COMPOSE=docker compose -f deploy/docker-compose.yml --env-file .env
+DOCKER_COMPOSE=docker compose -f docker-compose.yml --env-file .env
 
 # ── Help ──
 help:
@@ -74,10 +74,10 @@ test: up
 	@curl -s http://localhost:8081/health || echo "   ❌ Python AI not responding"
 	@echo ""
 	@echo "3. Ollama from Python..."
-	@docker exec reviewbot-ai curl -s http://host.docker.internal:11434/api/tags | grep -q qwen3.5 && echo "   ✅ Python can reach Ollama" || echo "   ❌ Python cannot reach Ollama"
+	@curl -s http://localhost:11434/api/tags | grep -q qwen3.5 && echo "   ✅ Python can reach Ollama" || echo "   ❌ Python cannot reach Ollama"
 	@echo ""
 	@echo "4. Postgres from Go..."
-	@docker exec reviewbot-go curl -s -X POST http://reviewbot-ai:8081/health && echo "   ✅ Services talking" || echo "   ❌ Services cannot communicate"
+	@curl -s http://localhost:8081/health && echo "   ✅ Services talking" || echo "   ❌ Services cannot communicate"
 
 # ── Evaluation (Week 2+) ──
 eval:

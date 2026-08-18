@@ -3,7 +3,7 @@ import os
 import json
 import time
 import logging
-from fastapi import FastAPI, HTTPException, HealthCheck
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import uvicorn
 
