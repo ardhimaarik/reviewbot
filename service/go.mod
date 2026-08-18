@@ -2,7 +2,12 @@ module github.com/ardhimaarik/reviewbot
 
 go 1.25.0
 
-require github.com/gin-gonic/gin v1.9.1
+require (
+	github.com/gin-gonic/gin v1.9.1
+	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/google/go-github/v65 v65.0.0
+	github.com/lib/pq v1.12.3
+)
 
 require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
@@ -15,6 +20,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.30.1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
